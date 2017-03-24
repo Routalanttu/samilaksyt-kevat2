@@ -25,6 +25,53 @@ namespace TAMKShooter
 					// Initialize unit
 					PlayerUnit unit = Instantiate ( unitPrefab, transform );
 					unit.transform.position = Vector3.zero;
+					switch (playerData.Id) {
+					case PlayerData.PlayerId.Player1:
+					{
+							var spawnPoint = GameObject.Find ("Spawnpoint 1");
+							if (null != spawnPoint) {
+								unit.transform.position = spawnPoint.transform.position;
+							} else {
+								Debug.Log ("Spawn Point 1 not found; using default position.");
+								unit.transform.position = new Vector3 (-12f, 0f, -4f);
+							}
+							break;
+					}
+					case PlayerData.PlayerId.Player2:
+					{
+						var spawnPoint = GameObject.Find ("Spawnpoint 2");
+						if (null != spawnPoint) {
+							unit.transform.position = spawnPoint.transform.position;
+						} else {
+							Debug.Log ("Spawn Point 2 not found; using default position.");
+							unit.transform.position = new Vector3 (-4f, 0f, -4f);
+						}
+						break;
+					}
+					case PlayerData.PlayerId.Player3:
+					{
+						var spawnPoint = GameObject.Find ("Spawnpoint 3");
+						if (null != spawnPoint) {
+							unit.transform.position = spawnPoint.transform.position;
+						} else {
+							Debug.Log ("Spawn Point 3 not found; using default position.");
+							unit.transform.position = new Vector3 (4f, 0f, -4f);
+						}
+						break;
+					}
+					case PlayerData.PlayerId.Player4:
+						{
+							var spawnPoint = GameObject.Find ("Spawnpoint 4");
+							if (null != spawnPoint) {
+								unit.transform.position = spawnPoint.transform.position;
+							} else {
+								Debug.Log ("Spawn Point 4 not found; using default position.");
+								unit.transform.position = new Vector3 (12f, 0f, -4f);
+							}
+							break;
+						}
+					}
+
 					unit.transform.rotation = Quaternion.identity;
 					unit.Init ( playerData );
 

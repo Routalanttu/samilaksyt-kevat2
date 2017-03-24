@@ -24,7 +24,6 @@ namespace TAMKShooter
 				{
 					// Initialize unit
 					PlayerUnit unit = Instantiate ( unitPrefab, transform );
-					unit.transform.position = Vector3.zero;
 					switch (playerData.Id) {
 					case PlayerData.PlayerId.Player1:
 					{
@@ -68,6 +67,12 @@ namespace TAMKShooter
 								Debug.Log ("Spawn Point 4 not found; using default position.");
 								unit.transform.position = new Vector3 (12f, 0f, -4f);
 							}
+							break;
+						}
+					case PlayerData.PlayerId.None:
+						{
+							Debug.Log ("Player ID set as \"None\"; spawning to (0,0,0)!");
+							unit.transform.position = Vector3.zero;
 							break;
 						}
 					}

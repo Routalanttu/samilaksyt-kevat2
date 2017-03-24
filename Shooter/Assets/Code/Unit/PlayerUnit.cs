@@ -19,6 +19,10 @@ namespace TAMKShooter
 
 		public UnitType Type { get { return _type; } }
 		public PlayerData Data { get; private set; }
+		public Vector3 Spawnpoint { get; private set; }
+
+		private float _invulnerabilityCooldown;
+		private MeshRenderer _visiblePart;
 
 		public override int ProjectileLayer
 		{
@@ -30,20 +34,26 @@ namespace TAMKShooter
 
 		public void Init( PlayerData playerData )
 		{
+			Spawnpoint = transform.position;
 			InitRequiredComponents();
 			Data = playerData;
 		}
 
 		protected override void Die ()
 		{
-			// TODO: Handle dying properly!
+			// TODO:
 			// Instantiate explosion effect
 			// Play sound
-			// Decrease lives
-			// Respawn player
-			gameObject.SetActive ( false );
-
-			base.Die ();
+			if (Data.Lives > 1) {
+				Data.Lives--;
+				// Restore health to 100 (as the minimum is clamped to 0, no deviation can happen):
+				TakeDamage (-100);
+				transform.position = Spawnpoint;
+				_invulnerabilityCooldown = 0.75f;
+			} else {
+				gameObject.SetActive (false);
+				base.Die ();
+			}
 		}
 
 		public void HandleInput ( Vector3 input, bool shoot )
@@ -54,5 +64,39 @@ namespace TAMKShooter
 				Weapons.Shoot (ProjectileLayer);
 			}
 		}
+
+		void OnTriggerEnter (Collider collie) {
+			if (_invulnerabilityCooldown <= 0f) {
+				// Make the unit invulnerable for a bit even after a non-lethal hit for added effect:
+				_invulnerabilityCooldown = 0.15f;
+				TakeDamage (50);
+			}
+
+			IHealth damageReceiver = collie.gameObject.GetComponentInChildren<Health> ();
+
+			if (null != damageReceiver) {
+				damageReceiver.TakeDamage (10);
+			}
+		}
+
+		void Awake () {
+			_visiblePart = GetComponent<MeshRenderer> ();
+		}
+
+		void Update () {
+			if (_invulnerabilityCooldown >= 0f) {
+				// Flashing:
+				if (_invulnerabilityCooldown % 0.1f > 0.05f) {
+					_visiblePart.enabled = false;
+				} else {
+					_visiblePart.enabled = true;
+				}
+
+				_invulnerabilityCooldown -= Time.deltaTime;
+			} else {
+				_visiblePart.enabled = true;
+			}
+		}
 	}
+		
 }
